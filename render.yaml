@@ -3,7 +3,7 @@ services:
     name: expressbookreviews
     runtime: node
     plan: free
-    rootDir: final_project
+    rootDir: backend
     buildCommand: npm install
     startCommand: npm start
     healthCheckPath: /isbn/1

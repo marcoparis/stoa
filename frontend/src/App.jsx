@@ -23,7 +23,7 @@ export default function App() {
         Stoà · recensioni di filosofia e psicologia ·{" "}
         <a href={`${API_URL}/api-docs`} target="_blank" rel="noreferrer">API</a>
         {" · "}
-        <a href="https://github.com/marcoparis/expressBookReviews" target="_blank" rel="noreferrer">Codice su GitHub</a>
+        <a href="https://github.com/marcoparis/stoa" target="_blank" rel="noreferrer">Codice su GitHub</a>
       </footer>
     </>
   );

@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import * as api from "../api";
 import { AuthContext } from "./context";
 
-const STORAGE_KEY = "book-reviews-auth";
+const STORAGE_KEY = "stoa-auth";
 
 
 const tokenExpiry = (token) => {

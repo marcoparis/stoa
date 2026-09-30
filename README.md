@@ -4,7 +4,7 @@
 
 It is made of a **REST API** built with Node.js and Express and a **React web app** that consumes it. Anyone can browse the catalog, filter it by school of thought and search by title or author; registered users can log in and add, edit or delete their own reviews.
 
-- **Web app:** https://marcoparis.github.io/expressBookReviews/
+- **Web app:** https://marcoparis.github.io/stoa/
 - **API:** https://expressbookreviews-xlyg.onrender.com
 - **Interactive API docs (Swagger UI):** https://expressbookreviews-xlyg.onrender.com/api-docs
 
@@ -15,7 +15,7 @@ It is made of a **REST API** built with Node.js and Express and a **React web ap
 ```
 ┌────────────────────────┐   HTTPS + JSON    ┌────────────────────────┐
 │ React app (frontend/)  │ ────────────────▶ │ Express API            │
-│ GitHub Pages           │  Bearer JWT, CORS │ (final_project/)       │
+│ GitHub Pages           │  Bearer JWT, CORS │ (backend/)             │
 └────────────────────────┘ ◀──────────────── │ Render                 │
                                              └────────────────────────┘
 ```
@@ -48,7 +48,7 @@ frontend/src/
 └── test/                  # API client and UI tests
 ```
 
-## API features (final_project/)
+## API features (backend/)
 
 - Book catalog (author, title, category, year, description, sample reviews) with lookup by ISBN and **case-insensitive, partial search** by author and title
 - User registration with input validation and **bcrypt-hashed passwords**
@@ -103,7 +103,7 @@ curl $BASE/review/1
 ## API project structure
 
 ```
-final_project/
+backend/
 ├── index.js            # starts the HTTP server
 ├── app.js              # Express app: middleware, routes, docs, error handling
 ├── config.js           # port and secrets from environment variables
@@ -122,7 +122,7 @@ final_project/
 Requires Node.js 22+. Start the API and the web app in two terminals:
 
 ```bash
-cd final_project
+cd backend
 npm install
 cp .env.example .env   # optional: JWT_SECRET, SESSION_SECRET, CORS_ORIGINS
 npm run dev            # http://localhost:5000, docs at /api-docs
