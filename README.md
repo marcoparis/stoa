@@ -3,8 +3,8 @@
 A full-stack book review application: a **REST API** built with Node.js and Express, and a **React web app** that consumes it. Anyone can browse and search the catalog; registered users can log in and add, edit or delete their own reviews.
 
 - **Web app:** https://marcoparis.github.io/expressBookReviews/
-- **API:** https://expressbookreviews.onrender.com
-- **Interactive API docs (Swagger UI):** https://expressbookreviews.onrender.com/api-docs
+- **API:** https://expressbookreviews-xlyg.onrender.com
+- **Interactive API docs (Swagger UI):** https://expressbookreviews-xlyg.onrender.com/api-docs
 
 > The API is hosted on Render's free tier: the first request after a period of inactivity can take ~30–60 s while the service wakes up (the web app shows a notice meanwhile).
 
@@ -83,7 +83,7 @@ frontend/src/
 ### Example
 
 ```bash
-BASE=https://expressbookreviews.onrender.com
+BASE=https://expressbookreviews-xlyg.onrender.com
 
 curl -X POST $BASE/register -H "Content-Type: application/json" \
      -d '{"username":"mario","password":"secret123"}'
