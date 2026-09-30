@@ -15,25 +15,26 @@ const registerAndLogin = async (agent = request(app)) => {
 describe('public book endpoints', () => {
     test('GET / returns all books as JSON', async () => {
         const res = await request(app).get('/').expect('Content-Type', /json/).expect(200);
-        expect(Object.keys(res.body)).toHaveLength(10);
-        expect(res.body['1']).toMatchObject({ author: 'Chinua Achebe', title: 'Things Fall Apart' });
+        expect(Object.keys(res.body)).toHaveLength(18);
+        expect(res.body['1']).toMatchObject({ author: 'Marco Aurelio', title: 'Meditazioni', category: 'Stoicismo' });
     });
 
     test('GET /isbn/:isbn returns one book or 404', async () => {
-        const res = await request(app).get('/isbn/8').expect(200);
-        expect(res.body.title).toBe('Pride and Prejudice');
+        const res = await request(app).get('/isbn/10').expect(200);
+        expect(res.body).toMatchObject({ title: 'Così parlò Zarathustra', year: '1883–1885' });
+        expect(res.body.description).toEqual(expect.any(String));
         await request(app).get('/isbn/999').expect(404);
     });
 
     test('GET /author/:author is case-insensitive and partial', async () => {
-        const res = await request(app).get('/author/austen').expect(200);
-        expect(res.body).toEqual([expect.objectContaining({ isbn: '8', author: 'Jane Austen' })]);
+        const res = await request(app).get('/author/NIETZSCHE').expect(200);
+        expect(res.body.map((b) => b.isbn)).toEqual(['10', '11']);
         await request(app).get('/author/nobody').expect(404);
     });
 
     test('GET /title/:title finds books by title', async () => {
-        const res = await request(app).get('/title/divine%20comedy').expect(200);
-        expect(res.body[0]).toMatchObject({ isbn: '3', author: 'Dante Alighieri' });
+        const res = await request(app).get('/title/zarathustra').expect(200);
+        expect(res.body).toEqual([expect.objectContaining({ isbn: '10', author: 'Friedrich Nietzsche' })]);
     });
 
     test('unknown routes return a JSON 404', async () => {
@@ -49,6 +50,10 @@ describe('registration', () => {
         const stored = users.find((u) => u.username === creds.username);
         expect(stored.password).toBeUndefined();
         expect(stored.passwordHash).toMatch(/^\$2[aby]\$/);
+    });
+
+    test('the authors of the sample reviews cannot be registered', async () => {
+        await request(app).post('/register').send({ username: 'sofia', password: 'secret123' }).expect(409);
     });
 
     test('rejects duplicates, missing fields and invalid input', async () => {

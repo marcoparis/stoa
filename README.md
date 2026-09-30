@@ -1,6 +1,8 @@
-# Book Reviews
+# Stoà – Recensioni di filosofia e psicologia
 
-A full-stack book review application: a **REST API** built with Node.js and Express, and a **React web app** that consumes it. Anyone can browse and search the catalog; registered users can log in and add, edit or delete their own reviews.
+**Stoà** is a full-stack review site for philosophy and psychology books: Marcus Aurelius, Seneca and the Stoics, Plato and Epicurus, Kant, Schopenhauer, Nietzsche, the existentialists and classics of psychology such as Frankl, Jung, Freud and Kahneman.
+
+It is made of a **REST API** built with Node.js and Express and a **React web app** that consumes it. Anyone can browse the catalog, filter it by school of thought and search by title or author; registered users can log in and add, edit or delete their own reviews.
 
 - **Web app:** https://marcoparis.github.io/expressBookReviews/
 - **API:** https://expressbookreviews-xlyg.onrender.com
@@ -22,7 +24,8 @@ The two parts are deployed independently. The browser app authenticates with the
 
 ## Web app (frontend/)
 
-- Catalog with generated book covers and review counts
+- Catalog of 18 books with generated covers (coloured by school of thought), year, description and review counts
+- Filter by category (Stoicism, ancient philosophy, modern philosophy, existentialism, psychology), kept in the URL
 - Search by title or author (the search is kept in the URL, so results can be shared or bookmarked)
 - Book page with all reviews; your own review is highlighted and can be written, edited or deleted
 - Registration and login, session kept in `localStorage` until the token expires; an expired session logs you out cleanly
@@ -47,7 +50,7 @@ frontend/src/
 
 ## API features (final_project/)
 
-- Book catalog with lookup by ISBN and **case-insensitive, partial search** by author and title
+- Book catalog (author, title, category, year, description, sample reviews) with lookup by ISBN and **case-insensitive, partial search** by author and title
 - User registration with input validation and **bcrypt-hashed passwords**
 - Login issuing a **JWT** (HS256, 1 h expiry), accepted either as `Authorization: Bearer <token>` or through an **HTTP-only session cookie**
 - Authenticated users can add/update and delete **only their own** reviews
@@ -107,7 +110,7 @@ final_project/
 ├── router/
 │   ├── general.js      # public routes: books, search, reviews, registration
 │   ├── auth_users.js   # login/logout, JWT auth middleware, review CRUD
-│   └── booksdb.js      # seed data
+│   └── booksdb.js      # seed data: 18 books and a few sample reviews
 ├── docs/openapi.js     # OpenAPI 3 specification
 └── tests/api.test.js   # Jest + Supertest integration tests
 ```
@@ -129,7 +132,7 @@ npm test
 ```bash
 cd frontend
 npm install
-npm run dev            # http://localhost:5173/expressBookReviews/ (talks to localhost:5000)
+npm run dev            # http://localhost:5173 (talks to localhost:5000)
 npm test
 npm run deploy         # build and publish to GitHub Pages
 ```

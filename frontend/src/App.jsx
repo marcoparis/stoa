@@ -20,8 +20,8 @@ export default function App() {
         <Route path="*" element={<main className="page"><p className="empty">Pagina non trovata.</p></main>} />
       </Routes>
       <footer className="footer">
-        Frontend React per la{" "}
-        <a href={`${API_URL}/api-docs`} target="_blank" rel="noreferrer">Book Reviews API</a>
+        Stoà · recensioni di filosofia e psicologia ·{" "}
+        <a href={`${API_URL}/api-docs`} target="_blank" rel="noreferrer">API</a>
         {" · "}
         <a href="https://github.com/marcoparis/expressBookReviews" target="_blank" rel="noreferrer">Codice su GitHub</a>
       </footer>

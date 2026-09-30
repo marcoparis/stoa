@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { BookOpen, LogOut, Search, UserRound } from "lucide-react";
+import { Landmark, LogOut, Search, UserRound } from "lucide-react";
 import { useAuth } from "../auth/useAuth";
 
 export default function Header() {
@@ -19,8 +19,8 @@ export default function Header() {
   return (
     <header className="header">
       <Link to="/" className="brand" onClick={() => setQuery("")}>
-        <BookOpen size={26} />
-        <span>Book Reviews</span>
+        <Landmark size={26} />
+        <span>Stoà</span>
       </Link>
 
       <form className="search" onSubmit={handleSearch} role="search">

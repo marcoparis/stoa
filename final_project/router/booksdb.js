@@ -1,14 +1,56 @@
-let books = {
-      1: {"author": "Chinua Achebe","title": "Things Fall Apart", "reviews": {} },
-      2: {"author": "Hans Christian Andersen","title": "Fairy tales", "reviews": {} },
-      3: {"author": "Dante Alighieri","title": "The Divine Comedy", "reviews": {} },
-      4: {"author": "Unknown","title": "The Epic Of Gilgamesh", "reviews": {} },
-      5: {"author": "Unknown","title": "The Book Of Job", "reviews": {} },
-      6: {"author": "Unknown","title": "One Thousand and One Nights", "reviews": {} },
-      7: {"author": "Unknown","title": "Nj\u00e1l's Saga", "reviews": {} },
-      8: {"author": "Jane Austen","title": "Pride and Prejudice", "reviews": {} },
-      9: {"author": "Honor\u00e9 de Balzac","title": "Le P\u00e8re Goriot", "reviews": {} },
-      10: {"author": "Samuel Beckett","title": "Molloy, Malone Dies, The Unnamable, the trilogy", "reviews": {} }
-}
+const book = (author, title, category, year, description, reviews = {}) =>
+    ({ author, title, category, year, description, reviews });
 
-module.exports=books;
+let books = {
+    1: book("Marco Aurelio", "Meditazioni", "Stoicismo", "170–180 d.C.",
+        "Gli appunti personali di un imperatore filosofo: esercizi quotidiani per restare sereni, giusti e padroni di sé.",
+        {
+            sofia: "Lo tengo sul comodino. Poche pagine al giorno bastano a rimettere le cose in prospettiva.",
+            luca: "Sorprende quanto sia attuale: parla di ansia, rabbia e ego come se fosse stato scritto ieri.",
+        }),
+    2: book("Seneca", "Lettere a Lucilio", "Stoicismo", "62–65 d.C.",
+        "124 lettere a un amico sul tempo, la morte, l'amicizia e la ricerca della saggezza, scritte negli ultimi anni di vita.",
+        { giorgia: "Ogni lettera è un piccolo saggio. La prima, sul valore del tempo, vale da sola il libro." }),
+    3: book("Epitteto", "Manuale", "Stoicismo", "II sec. d.C.",
+        "Il nucleo dello stoicismo in poche pagine: distinguere ciò che dipende da noi da ciò che non dipende da noi."),
+    4: book("Seneca", "La brevità della vita", "Stoicismo", "49 d.C.",
+        "La vita non è breve: siamo noi a sprecarla. Un breve dialogo su come usare davvero il proprio tempo.",
+        { luca: "Breve e tagliente. Da rileggere ogni volta che mi lamento di non avere tempo." }),
+    5: book("Platone", "Apologia di Socrate", "Filosofia antica", "IV sec. a.C.",
+        "La difesa di Socrate davanti ai giudici di Atene: una vita dedicata al dialogo e alla ricerca della verità."),
+    6: book("Epicuro", "Lettera sulla felicità", "Filosofia antica", "III sec. a.C.",
+        "La lettera a Meneceo: liberarsi dalla paura degli dèi e della morte e coltivare piaceri semplici e amicizia."),
+    7: book("Immanuel Kant", "Critica della ragion pura", "Filosofia moderna", "1781",
+        "Che cosa possiamo conoscere? Kant indaga i limiti e le condizioni della conoscenza umana e rivoluziona la filosofia.",
+        { sofia: "Impegnativo, ma con una buona introduzione accanto si apre un mondo. Da leggere con calma." }),
+    8: book("Immanuel Kant", "Fondazione della metafisica dei costumi", "Filosofia moderna", "1785",
+        "L'imperativo categorico: agire solo secondo massime che si possano volere come legge universale."),
+    9: book("Arthur Schopenhauer", "Il mondo come volontà e rappresentazione", "Filosofia moderna", "1819",
+        "Dietro il mondo delle apparenze agisce una volontà cieca: l'arte, la compassione e l'ascesi come vie di liberazione."),
+    10: book("Friedrich Nietzsche", "Così parlò Zarathustra", "Filosofia moderna", "1883–1885",
+        "Un libro per tutti e per nessuno: in forma poetica, l'annuncio del superuomo, della morte di Dio e dell'eterno ritorno.",
+        { giorgia: "Più poesia che trattato. Non tutto è chiaro, ma certe pagine restano in testa per giorni." }),
+    11: book("Friedrich Nietzsche", "Al di là del bene e del male", "Filosofia moderna", "1886",
+        "Una critica radicale alla morale tradizionale e ai pregiudizi dei filosofi, in aforismi brillanti e provocatori."),
+    12: book("Søren Kierkegaard", "Aut-Aut", "Esistenzialismo", "1843",
+        "Vita estetica o vita etica? Kierkegaard mette il lettore davanti alla responsabilità della scelta."),
+    13: book("Albert Camus", "Il mito di Sisifo", "Esistenzialismo", "1942",
+        "Di fronte all'assurdo della vita, la risposta non è la resa ma la rivolta: bisogna immaginare Sisifo felice."),
+    14: book("Viktor E. Frankl", "Uno psicologo nei lager", "Psicologia", "1946",
+        "L'esperienza dei campi di concentramento e la nascita della logoterapia: chi ha un perché può sopportare quasi ogni come.",
+        {
+            luca: "Uno dei libri più importanti che abbia mai letto. Duro ma pieno di speranza.",
+            sofia: "Il collegamento con lo stoicismo è evidente: la libertà di scegliere il proprio atteggiamento.",
+        }),
+    15: book("Carl Gustav Jung", "L'uomo e i suoi simboli", "Psicologia", "1964",
+        "L'introduzione più accessibile al pensiero di Jung: inconscio collettivo, archetipi e il linguaggio dei sogni."),
+    16: book("Sigmund Freud", "L'interpretazione dei sogni", "Psicologia", "1899",
+        "L'opera che fonda la psicoanalisi: i sogni come via regia verso la conoscenza dell'inconscio."),
+    17: book("Daniel Kahneman", "Pensieri lenti e veloci", "Psicologia", "2011",
+        "Il premio Nobel spiega i due sistemi del pensiero, intuitivo e riflessivo, e gli errori sistematici del nostro giudizio.",
+        { giorgia: "Cambia il modo in cui guardi le tue decisioni. Lungo, ma ogni capitolo ha un'idea forte." }),
+    18: book("Erich Fromm", "L'arte di amare", "Psicologia", "1956",
+        "L'amore non è una sensazione ma un'arte che richiede disciplina, pazienza e conoscenza di sé."),
+};
+
+module.exports = books;

@@ -26,7 +26,7 @@ app.use("/customer", session({
 
 app.use("/customer/auth", authenticate);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi, { customSiteTitle: "Book Reviews API" }));
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(openapi, { customSiteTitle: "Stoà API" }));
 app.get("/openapi.json", (req, res) => res.json(openapi));
 
 app.use("/customer", customer_routes);

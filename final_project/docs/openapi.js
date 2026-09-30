@@ -8,10 +8,11 @@ const isbnParam = { name: 'isbn', in: 'path', required: true, schema: { type: 's
 module.exports = {
     openapi: '3.0.3',
     info: {
-        title: 'Book Reviews API',
-        version: '2.0.0',
+        title: 'Stoà API',
+        version: '2.1.0',
         description:
-            'REST API for an online bookshop: browse books, register, log in and manage your own reviews.\n\n' +
+            'REST API behind Stoà, a review site for philosophy and psychology books: ' +
+            'browse the catalog, register, log in and manage your own reviews.\n\n' +
             '**How to try the protected endpoints here:** call `POST /register`, then `POST /customer/login`. ' +
             'The session cookie is set automatically, or copy the returned `token` into **Authorize** (Bearer).',
     },
@@ -31,19 +32,22 @@ module.exports = {
             Book: {
                 type: 'object',
                 properties: {
-                    author: { type: 'string', example: 'Jane Austen' },
-                    title: { type: 'string', example: 'Pride and Prejudice' },
+                    author: { type: 'string', example: 'Marco Aurelio' },
+                    title: { type: 'string', example: 'Meditazioni' },
+                    category: { type: 'string', example: 'Stoicismo' },
+                    year: { type: 'string', example: '170–180 d.C.' },
+                    description: { type: 'string' },
                     reviews: ref('Reviews'),
                 },
             },
             BookWithIsbn: {
-                allOf: [{ type: 'object', properties: { isbn: { type: 'string', example: '8' } } }, ref('Book')],
+                allOf: [{ type: 'object', properties: { isbn: { type: 'string', example: '1' } } }, ref('Book')],
             },
             Reviews: {
                 type: 'object',
                 description: 'Map of username → review text',
                 additionalProperties: { type: 'string' },
-                example: { mario: 'Great book!' },
+                example: { sofia: 'Lo tengo sul comodino.' },
             },
             Credentials: {
                 type: 'object',
@@ -80,7 +84,7 @@ module.exports = {
             get: {
                 tags: ['Books'],
                 summary: 'Search books by author (case-insensitive, partial match)',
-                parameters: [{ name: 'author', in: 'path', required: true, schema: { type: 'string' }, example: 'austen' }],
+                parameters: [{ name: 'author', in: 'path', required: true, schema: { type: 'string' }, example: 'nietzsche' }],
                 responses: {
                     200: { description: 'Matching books', content: json({ type: 'array', items: ref('BookWithIsbn') }) },
                     404: msg('No book found'),
@@ -91,7 +95,7 @@ module.exports = {
             get: {
                 tags: ['Books'],
                 summary: 'Search books by title (case-insensitive, partial match)',
-                parameters: [{ name: 'title', in: 'path', required: true, schema: { type: 'string' }, example: 'comedy' }],
+                parameters: [{ name: 'title', in: 'path', required: true, schema: { type: 'string' }, example: 'zarathustra' }],
                 responses: {
                     200: { description: 'Matching books', content: json({ type: 'array', items: ref('BookWithIsbn') }) },
                     404: msg('No book found'),
@@ -152,7 +156,7 @@ module.exports = {
                         required: false,
                         description: 'Review text (alternatively send JSON body `{ "review": "..." }`)',
                         schema: { type: 'string', maxLength: 1000 },
-                        example: 'A timeless classic.',
+                        example: 'Un classico senza tempo.',
                     },
                 ],
                 responses: {

@@ -105,13 +105,16 @@ export default function BookDetail() {
       <Link to="/" className="back-link"><ArrowLeft size={16} /> Torna al catalogo</Link>
 
       <section className="book-detail">
-        <BookCover isbn={book.isbn} title={book.title} author={book.author} size="lg" />
-        <div>
-          <p className="muted small">ISBN {book.isbn}</p>
+        <BookCover title={book.title} author={book.author} category={book.category} size="lg" />
+        <div className="book-info">
+          <p className="muted small">
+            {[book.category, book.year].filter(Boolean).join(" · ")}
+          </p>
           <h1>{book.title}</h1>
           <p className="book-author">
             di <Link to={`/?${new URLSearchParams({ q: book.author, by: "author" })}`}>{book.author}</Link>
           </p>
+          {book.description && <p className="book-description">{book.description}</p>}
         </div>
       </section>
 

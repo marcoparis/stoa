@@ -21,7 +21,10 @@ const isValidPassword = (password) =>
     password.length >= MIN_PASSWORD_LENGTH &&
     password.length <= MAX_PASSWORD_LENGTH;
 
-const userExists = (username) => users.some((u) => u.username === username);
+// Usernames of the sample reviews in booksdb.js cannot be registered, so nobody can take over those reviews.
+const RESERVED_USERNAMES = new Set(Object.values(books).flatMap((b) => Object.keys(b.reviews)));
+
+const userExists = (username) => RESERVED_USERNAMES.has(username) || users.some((u) => u.username === username);
 
 const registerUser = async (username, password) => {
     const passwordHash = await bcrypt.hash(password, 10);

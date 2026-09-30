@@ -6,8 +6,8 @@ import App from "../App";
 import { AuthProvider } from "../auth/AuthProvider";
 
 const BOOKS = {
-  1: { author: "Chinua Achebe", title: "Things Fall Apart", reviews: {} },
-  8: { author: "Jane Austen", title: "Pride and Prejudice", reviews: { anna: "Bellissimo" } },
+  1: { author: "Marco Aurelio", title: "Meditazioni", category: "Stoicismo", reviews: { sofia: "Da comodino" } },
+  10: { author: "Friedrich Nietzsche", title: "Così parlò Zarathustra", category: "Filosofia moderna", reviews: {} },
 };
 
 const respond = (status, body) =>
@@ -36,9 +36,18 @@ describe("catalog", () => {
     vi.stubGlobal("fetch", vi.fn(() => respond(200, BOOKS)));
     renderApp();
 
-    expect(await screen.findByRole("heading", { name: "Pride and Prejudice" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Things Fall Apart" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Meditazioni" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Così parlò Zarathustra" })).toBeInTheDocument();
     expect(screen.getByText("1 recensione")).toBeInTheDocument();
+  });
+
+  it("filters the catalog by category", async () => {
+    vi.stubGlobal("fetch", vi.fn(() => respond(200, BOOKS)));
+    renderApp();
+
+    await userEvent.click(await screen.findByRole("button", { name: "Stoicismo" }));
+    expect(screen.getByRole("heading", { name: "Meditazioni" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Così parlò Zarathustra" })).not.toBeInTheDocument();
   });
 });
 
