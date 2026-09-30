@@ -24,7 +24,7 @@ The two parts are deployed independently. The browser app authenticates with the
 
 ## Web app (frontend/)
 
-- Catalog of 18 books with generated covers (coloured by school of thought), year, description and review counts
+- Catalog of 18 books with covers built from **author portraits** (busts, paintings and historical photos from Wikimedia Commons, tinted by school of thought), year, description and review counts
 - Filter by category (Stoicism, ancient philosophy, modern philosophy, existentialism, psychology), kept in the URL
 - Search by title or author (the search is kept in the URL, so results can be shared or bookmarked)
 - Book page with all reviews; your own review is highlighted and can be written, edited or deleted
@@ -43,8 +43,9 @@ The two parts are deployed independently. The browser app authenticates with the
 frontend/src/
 ├── api.js                 # fetch wrapper: base URL, JSON, Bearer token, ApiError
 ├── auth/                  # AuthProvider (login/register/logout, token persistence) + useAuth hook
-├── components/            # Header with search, BookCover, Loading
-├── pages/                 # BookList, BookDetail, AuthForm (login + register)
+├── components/            # Header with search, BookCover (portrait + title), Loading
+├── data/authors.js        # author portraits and their credits
+├── pages/                 # BookList, BookDetail, AuthForm (login + register), Credits
 └── test/                  # API client and UI tests
 ```
 
@@ -146,3 +147,25 @@ If the secrets are not set, random ones are generated at startup (tokens then st
 - Users and reviews are kept **in memory**, so they reset when the server restarts. The next step would be a database (e.g. PostgreSQL with an ORM) behind the same route handlers.
 - Sessions use the default in-memory store; with a database, a persistent session store (or JWT-only auth) would be used instead.
 - Rate limiting on `/customer/login` would be needed before real-world use.
+
+## Image credits
+
+Author portraits from [Wikimedia Commons](https://commons.wikimedia.org), cropped and converted to black and white:
+
+| Author | Image by | Licence | Source |
+| --- | --- | --- | --- |
+| Marco Aurelio | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Marcus_Aurelius_Louvre_MR561_n02.jpg) |
+| Seneca | Calidius | CC BY-SA 3.0 | [link](https://commons.wikimedia.org/wiki/File:Duble_herma_of_Socrates_and_Seneca_Antikensammlung_Berlin_07.jpg) |
+| Epitteto | Theodoor Galle | Public domain | [link](https://commons.wikimedia.org/wiki/File:Epictetus_from_L._Annaei_Senecae_philosophi_Opera,_1605,_title_page_detail.png) |
+| Platone | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Plato_Silanion_Musei_Capitolini_MC1377.jpg) |
+| Epicuro | Marie-Lan Nguyen | Public domain | [link](https://commons.wikimedia.org/wiki/File:Epicurus_Massimo_Inv197306.jpg) |
+| Immanuel Kant | Johann Gottlieb Becker | Public domain | [link](https://commons.wikimedia.org/wiki/File:Immanuel_Kant_-_Gemaelde_2.jpg) |
+| Arthur Schopenhauer | Johann Schäfer | Public domain | [link](https://commons.wikimedia.org/wiki/File:Arthur_Schopenhauer_by_J_Schäfer,_1859b.jpg) |
+| Friedrich Nietzsche | Friedrich Hermann Hartmann | Public domain | [link](https://commons.wikimedia.org/wiki/File:Nietzsche187a.jpg) |
+| Søren Kierkegaard | Biblioteca Reale di Danimarca | Public domain | [link](https://commons.wikimedia.org/wiki/File:Søren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg) |
+| Albert Camus | United Press International | Public domain | [link](https://commons.wikimedia.org/wiki/File:Albert_Camus,_gagnant_de_prix_Nobel,_portrait_en_buste,_posé_au_bureau,_faisant_face_à_gauche,_cigarette_de_tabagisme.jpg) |
+| Viktor E. Frankl | Prof. Dr. Franz Vesely | CC BY-SA 3.0 DE | [link](https://commons.wikimedia.org/wiki/File:Viktor_Frankl2.jpg) |
+| Carl Gustav Jung | ETH-Bibliothek Zürich | Public Domain Mark | [link](https://commons.wikimedia.org/wiki/File:ETH-BIB-Jung,_Carl_Gustav_%281875-1961%29-Portrait-Portr_14163_%28cropped%29.tif) |
+| Sigmund Freud | Max Halberstadt | Public domain | [link](https://commons.wikimedia.org/wiki/File:Sigmund_Freud,_by_Max_Halberstadt_%28cropped%29.jpg) |
+| Daniel Kahneman | nrkbeta | CC BY-SA 2.0 | [link](https://commons.wikimedia.org/wiki/File:Daniel_Kahneman_%283283955327%29_%28cropped%29.jpg) |
+| Erich Fromm | Müller-May | CC BY-SA 3.0 DE | [link](https://commons.wikimedia.org/wiki/File:Erich_Fromm_1974_%28cropped%292.jpg) |
