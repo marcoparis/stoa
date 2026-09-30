@@ -1,13 +1,51 @@
-# Book Reviews API
+# Book Reviews
 
-A REST API for an online bookshop built with Node.js and Express. Anyone can browse and search the catalog; registered users can log in and add, edit or delete their own reviews.
+A full-stack book review application: a **REST API** built with Node.js and Express, and a **React web app** that consumes it. Anyone can browse and search the catalog; registered users can log in and add, edit or delete their own reviews.
 
-- **Live API:** https://expressbookreviews.onrender.com
-- **Interactive docs (Swagger UI):** https://expressbookreviews.onrender.com/api-docs
+- **Web app:** https://marcoparis.github.io/expressBookReviews/
+- **API:** https://expressbookreviews.onrender.com
+- **Interactive API docs (Swagger UI):** https://expressbookreviews.onrender.com/api-docs
 
-> Hosted on Render's free tier: the first request after a period of inactivity can take ~30–60 s while the service wakes up.
+> The API is hosted on Render's free tier: the first request after a period of inactivity can take ~30–60 s while the service wakes up (the web app shows a notice meanwhile).
 
-## Features
+## Architecture
+
+```
+┌────────────────────────┐   HTTPS + JSON    ┌────────────────────────┐
+│ React app (frontend/)  │ ────────────────▶ │ Express API            │
+│ GitHub Pages           │  Bearer JWT, CORS │ (final_project/)       │
+└────────────────────────┘ ◀──────────────── │ Render                 │
+                                             └────────────────────────┘
+```
+
+The two parts are deployed independently. The browser app authenticates with the JWT returned at login (sent as `Authorization: Bearer`), and the API only accepts cross-origin requests from the allowed origins (`CORS_ORIGINS`).
+
+## Web app (frontend/)
+
+- Catalog with generated book covers and review counts
+- Search by title or author (the search is kept in the URL, so results can be shared or bookmarked)
+- Book page with all reviews; your own review is highlighted and can be written, edited or deleted
+- Registration and login, session kept in `localStorage` until the token expires; an expired session logs you out cleanly
+- Loading states, a notice while the free server wakes up, error messages from the API, responsive layout
+
+| Area | Tools |
+| --- | --- |
+| UI | React 19, React Router (HashRouter for GitHub Pages), lucide-react icons, CSS |
+| State | React Context for authentication, component state for data fetching |
+| Build / lint | Vite, oxlint |
+| Testing | Vitest, React Testing Library, jsdom |
+| Deployment | GitHub Pages (`gh-pages`) |
+
+```
+frontend/src/
+├── api.js                 # fetch wrapper: base URL, JSON, Bearer token, ApiError
+├── auth/                  # AuthProvider (login/register/logout, token persistence) + useAuth hook
+├── components/            # Header with search, BookCover, Loading
+├── pages/                 # BookList, BookDetail, AuthForm (login + register)
+└── test/                  # API client and UI tests
+```
+
+## API features (final_project/)
 
 - Book catalog with lookup by ISBN and **case-insensitive, partial search** by author and title
 - User registration with input validation and **bcrypt-hashed passwords**
@@ -21,7 +59,7 @@ A REST API for an online bookshop built with Node.js and Express. Anyone can bro
 
 | Area | Tools |
 | --- | --- |
-| Runtime / framework | Node.js, Express 4 |
+| Runtime / framework | Node.js, Express 4, cors |
 | Authentication | jsonwebtoken (JWT), express-session, bcryptjs |
 | API documentation | OpenAPI 3, swagger-ui-express |
 | Testing | Jest, Supertest |
@@ -59,7 +97,7 @@ curl -X PUT "$BASE/customer/auth/review/1" -H "Authorization: Bearer $TOKEN" \
 curl $BASE/review/1
 ```
 
-## Project structure
+## API project structure
 
 ```
 final_project/
@@ -78,15 +116,25 @@ final_project/
 
 ## Running locally
 
-Requires Node.js 22+.
+Requires Node.js 22+. Start the API and the web app in two terminals:
 
 ```bash
 cd final_project
 npm install
-cp .env.example .env   # optional: set JWT_SECRET and SESSION_SECRET
+cp .env.example .env   # optional: JWT_SECRET, SESSION_SECRET, CORS_ORIGINS
 npm run dev            # http://localhost:5000, docs at /api-docs
 npm test
 ```
+
+```bash
+cd frontend
+npm install
+npm run dev            # http://localhost:5173/expressBookReviews/ (talks to localhost:5000)
+npm test
+npm run deploy         # build and publish to GitHub Pages
+```
+
+The web app uses the Render API in production builds and `http://localhost:5000` in development; set `VITE_API_URL` to point it elsewhere.
 
 If the secrets are not set, random ones are generated at startup (tokens then stay valid only until the process restarts). On Render they are generated once by the `render.yaml` blueprint.
 

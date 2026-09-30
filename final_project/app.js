@@ -1,10 +1,11 @@
 const express = require('express');
 const session = require('express-session');
+const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const { authenticated: customer_routes, authenticate } = require('./router/auth_users.js');
 const { general: genl_routes } = require('./router/general.js');
 const openapi = require('./docs/openapi.js');
-const { sessionSecret, isProduction } = require('./config.js');
+const { sessionSecret, isProduction, corsOrigins } = require('./config.js');
 
 const app = express();
 
@@ -12,6 +13,8 @@ app.set('json spaces', 2);
 app.set('trust proxy', 1); // behind the hosting provider's HTTPS proxy
 app.disable('x-powered-by');
 
+// The web frontend is served from another origin and authenticates with a Bearer token, so no credentials are needed.
+app.use(cors({ origin: corsOrigins }));
 app.use(express.json({ limit: '10kb' }));
 
 app.use("/customer", session({

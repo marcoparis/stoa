@@ -9,4 +9,8 @@ module.exports = {
     jwtSecret: secret('JWT_SECRET'),
     sessionSecret: secret('SESSION_SECRET'),
     jwtExpiresIn: '1h',
+    corsOrigins: (process.env.CORS_ORIGINS || 'https://marcoparis.github.io,http://localhost:5173')
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean),
 };

@@ -149,6 +149,24 @@ describe('reviews', () => {
     });
 });
 
+describe('CORS', () => {
+    test('allows the web frontend origin, including the Authorization preflight', async () => {
+        const res = await request(app)
+            .options('/customer/auth/review/1')
+            .set('Origin', 'https://marcoparis.github.io')
+            .set('Access-Control-Request-Method', 'PUT')
+            .set('Access-Control-Request-Headers', 'authorization,content-type')
+            .expect(204);
+        expect(res.headers['access-control-allow-origin']).toBe('https://marcoparis.github.io');
+        expect(res.headers['access-control-allow-headers']).toMatch(/authorization/i);
+    });
+
+    test('does not allow unknown origins', async () => {
+        const res = await request(app).get('/').set('Origin', 'https://evil.example').expect(200);
+        expect(res.headers['access-control-allow-origin']).toBeUndefined();
+    });
+});
+
 describe('API docs', () => {
     test('serves the OpenAPI spec', async () => {
         const res = await request(app).get('/openapi.json').expect(200);
