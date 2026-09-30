@@ -1,6 +1,6 @@
 {
   "name": "stoa-api",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "description": "REST API for an online bookshop with user registration, JWT/session authentication and book reviews",
   "main": "index.js",
   "scripts": {

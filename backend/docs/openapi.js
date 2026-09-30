@@ -9,7 +9,7 @@ module.exports = {
     openapi: '3.0.3',
     info: {
         title: 'Stoà API',
-        version: '2.1.0',
+        version: '2.2.0',
         description:
             'REST API behind Stoà, a review site for philosophy and psychology books: ' +
             'browse the catalog, register, log in and manage your own reviews.\n\n' +
