@@ -1,171 +1,90 @@
-# Stoà – Recensioni di filosofia e psicologia
+# Stoà
 
-**Stoà** is a full-stack review site for philosophy and psychology books: Marcus Aurelius, Seneca and the Stoics, Plato and Epicurus, Kant, Schopenhauer, Nietzsche, the existentialists and classics of psychology such as Frankl, Jung, Freud and Kahneman.
+Un sito di recensioni per libri di filosofia e psicologia: Marco Aurelio, Seneca e gli stoici, Platone ed Epicuro, Kant, Schopenhauer, Nietzsche, gli esistenzialisti e alcuni classici della psicologia come Frankl, Jung, Freud e Kahneman.
 
-It is made of a **REST API** built with Node.js and Express and a **React web app** that consumes it. Anyone can browse the catalog, filter it by school of thought and search by title or author; registered users can log in and add, edit or delete their own reviews.
+Chiunque può sfogliare il catalogo, filtrarlo per corrente e cercare per titolo o autore. Chi si registra può scrivere, modificare e cancellare le proprie recensioni.
 
-- **Web app:** https://marcoparis.github.io/stoa/
-- **API:** https://expressbookreviews-xlyg.onrender.com
-- **Interactive API docs (Swagger UI):** https://expressbookreviews-xlyg.onrender.com/api-docs
+- Sito: https://marcoparis.github.io/stoa/
+- API: https://expressbookreviews-xlyg.onrender.com (documentazione interattiva su `/api-docs`)
 
-> The API is hosted on Render's free tier: the first request after a period of inactivity can take ~30–60 s while the service wakes up (the web app shows a notice meanwhile).
+L'API sta sul piano gratuito di Render, che dopo un po' di inattività si spegne: la prima richiesta può impiegare fino a un minuto, e nel frattempo il sito mostra un avviso.
 
-## Architecture
+## Com'è fatto
 
-```
-┌────────────────────────┐   HTTPS + JSON    ┌────────────────────────┐
-│ React app (frontend/)  │ ────────────────▶ │ Express API            │
-│ GitHub Pages           │  Bearer JWT, CORS │ (backend/)             │
-└────────────────────────┘ ◀──────────────── │ Render                 │
-                                             └────────────────────────┘
-```
+Sono due progetti separati che parlano in JSON:
 
-The two parts are deployed independently. The browser app authenticates with the JWT returned at login (sent as `Authorization: Bearer`), and the API only accepts cross-origin requests from the allowed origins (`CORS_ORIGINS`).
+- `frontend/`: app React pubblicata su GitHub Pages
+- `backend/`: API REST in Node.js ed Express, pubblicata su Render
 
-## Web app (frontend/)
+Al login l'API restituisce un JWT, che il sito salva e manda nell'header `Authorization` a ogni richiesta protetta. L'API accetta richieste dal browser solo dalle origini indicate in `CORS_ORIGINS`.
 
-- Catalog of 18 books with covers built from **author portraits** (busts, paintings and historical photos from Wikimedia Commons, tinted by school of thought), year, description and review counts
-- Filter by category (Stoicism, ancient philosophy, modern philosophy, existentialism, psychology), kept in the URL
-- Search by title or author (the search is kept in the URL, so results can be shared or bookmarked)
-- Book page with all reviews; your own review is highlighted and can be written, edited or deleted
-- Registration and login, session kept in `localStorage` until the token expires; an expired session logs you out cleanly
-- Loading states, a notice while the free server wakes up, error messages from the API, responsive layout
+### Frontend
 
-| Area | Tools |
-| --- | --- |
-| UI | React 19, React Router (HashRouter for GitHub Pages), lucide-react icons, CSS |
-| State | React Context for authentication, component state for data fetching |
-| Build / lint | Vite, oxlint |
-| Testing | Vitest, React Testing Library, jsdom |
-| Deployment | GitHub Pages (`gh-pages`) |
+React 19 con React Router. Uso `HashRouter` perché GitHub Pages serve solo file statici e non saprebbe gestire un indirizzo come `/books/3`. Lo stato di login sta in un Context React, con un hook `useAuth`. Il token resta in `localStorage` finché non scade; quando scade l'utente viene disconnesso con un messaggio. Ricerca e filtro per corrente finiscono nell'URL, così un risultato si può condividere.
 
-```
-frontend/src/
-├── api.js                 # fetch wrapper: base URL, JSON, Bearer token, ApiError
-├── auth/                  # AuthProvider (login/register/logout, token persistence) + useAuth hook
-├── components/            # Header with search, BookCover (portrait + title), Loading
-├── data/authors.js        # author portraits and their credits
-├── pages/                 # BookList, BookDetail, AuthForm (login + register), Credits
-└── test/                  # API client and UI tests
-```
+Le copertine sono ritratti degli autori in bianco e nero, colorati in base alla corrente, con titolo e autore sopra. Non uso le copertine vere perché sono protette dal copyright degli editori.
 
-## API features (backend/)
+Build con Vite, test con Vitest e React Testing Library, lint con oxlint.
 
-- Book catalog (author, title, category, year, description, sample reviews) with lookup by ISBN and **case-insensitive, partial search** by author and title
-- User registration with input validation and **bcrypt-hashed passwords**
-- Login issuing a **JWT** (HS256, 1 h expiry), accepted either as `Authorization: Bearer <token>` or through an **HTTP-only session cookie**
-- Authenticated users can add/update and delete **only their own** reviews
-- **OpenAPI 3 documentation** with Swagger UI to try every endpoint from the browser
-- Consistent JSON responses, JSON 404s for unknown routes and a central error handler
-- **Automated tests** (Jest + Supertest) covering the public endpoints, auth and the review flow
+### Backend
 
-## Tech stack
+Express 4. Le password sono salvate con bcrypt. Il JWT dura un'ora e viene accettato sia come header `Bearer` sia tramite cookie di sessione `httpOnly`. Ogni utente può modificare solo le proprie recensioni. Input e lunghezza dei testi vengono validati. Gli errori tornano sempre in JSON, con un gestore centrale e un 404 per gli indirizzi che non esistono.
 
-| Area | Tools |
-| --- | --- |
-| Runtime / framework | Node.js, Express 4, cors |
-| Authentication | jsonwebtoken (JWT), express-session, bcryptjs |
-| API documentation | OpenAPI 3, swagger-ui-express |
-| Testing | Jest, Supertest |
-| Deployment | Render (`render.yaml` blueprint) |
+La documentazione OpenAPI 3 è servita con Swagger UI su `/api-docs`, da cui si possono provare tutti gli endpoint. I test usano Jest e Supertest sull'app in memoria, senza aprire una porta: per questo `app.js` è separato da `index.js`.
 
-## Endpoints
-
-| Method | Path | Auth | Description |
+| Metodo | Percorso | Login | Cosa fa |
 | --- | --- | --- | --- |
-| GET | `/` | – | List all books |
-| GET | `/isbn/:isbn` | – | Get a book by ISBN |
-| GET | `/author/:author` | – | Search books by author |
-| GET | `/title/:title` | – | Search books by title |
-| GET | `/review/:isbn` | – | Get the reviews of a book |
-| POST | `/register` | – | Register (`{ "username", "password" }`) |
-| POST | `/customer/login` | – | Log in, returns `{ token }` and sets the session cookie |
-| POST | `/customer/logout` | – | Destroy the session |
-| PUT | `/customer/auth/review/:isbn` | ✔ | Add or update your review (`?review=...` or JSON `{ "review" }`) |
-| DELETE | `/customer/auth/review/:isbn` | ✔ | Delete your review |
+| GET | `/` | | tutti i libri |
+| GET | `/isbn/:isbn` | | un libro |
+| GET | `/author/:author`, `/title/:title` | | ricerca, anche parziale e senza distinguere maiuscole |
+| GET | `/review/:isbn` | | recensioni di un libro |
+| POST | `/register` | | registrazione |
+| POST | `/customer/login`, `/customer/logout` | | accesso e uscita |
+| PUT | `/customer/auth/review/:isbn` | sì | scrive o modifica la propria recensione |
+| DELETE | `/customer/auth/review/:isbn` | sì | cancella la propria recensione |
 
-### Example
+## Avvio in locale
 
-```bash
-BASE=https://expressbookreviews-xlyg.onrender.com
-
-curl -X POST $BASE/register -H "Content-Type: application/json" \
-     -d '{"username":"mario","password":"secret123"}'
-
-TOKEN=$(curl -s -X POST $BASE/customer/login -H "Content-Type: application/json" \
-     -d '{"username":"mario","password":"secret123"}' | node -pe 'JSON.parse(require("fs").readFileSync(0)).token')
-
-curl -X PUT "$BASE/customer/auth/review/1" -H "Authorization: Bearer $TOKEN" \
-     -H "Content-Type: application/json" -d '{"review":"A timeless classic"}'
-
-curl $BASE/review/1
-```
-
-## API project structure
-
-```
-backend/
-├── index.js            # starts the HTTP server
-├── app.js              # Express app: middleware, routes, docs, error handling
-├── config.js           # port and secrets from environment variables
-├── router/
-│   ├── general.js      # public routes: books, search, reviews, registration
-│   ├── auth_users.js   # login/logout, JWT auth middleware, review CRUD
-│   └── booksdb.js      # seed data: 18 books and a few sample reviews
-├── docs/openapi.js     # OpenAPI 3 specification
-└── tests/api.test.js   # Jest + Supertest integration tests
-```
-
-`app.js` is separated from `index.js` so the tests can exercise the whole app in memory without opening a port.
-
-## Running locally
-
-Requires Node.js 22+. Start the API and the web app in two terminals:
+Serve Node.js 22 o successivo. In due terminali:
 
 ```bash
 cd backend
 npm install
-cp .env.example .env   # optional: JWT_SECRET, SESSION_SECRET, CORS_ORIGINS
-npm run dev            # http://localhost:5000, docs at /api-docs
-npm test
+npm run dev          # http://localhost:5000, documentazione su /api-docs
 ```
 
 ```bash
 cd frontend
 npm install
-npm run dev            # http://localhost:5173 (talks to localhost:5000)
-npm test
-npm run deploy         # build and publish to GitHub Pages
+npm run dev          # http://localhost:5173, usa l'API locale
 ```
 
-The web app uses the Render API in production builds and `http://localhost:5000` in development; set `VITE_API_URL` to point it elsewhere.
+Test: `npm test` in ciascuna cartella. Per pubblicare il sito: `npm run deploy` in `frontend/`.
 
-If the secrets are not set, random ones are generated at startup (tokens then stay valid only until the process restarts). On Render they are generated once by the `render.yaml` blueprint.
+Senza `JWT_SECRET` e `SESSION_SECRET` nel `.env` (vedi `backend/.env.example`) l'API ne genera di casuali all'avvio, quindi i token valgono fino al riavvio. Su Render le crea il blueprint `render.yaml`.
 
-## Limitations and next steps
+## Limiti
 
-- Users and reviews are kept **in memory**, so they reset when the server restarts. The next step would be a database (e.g. PostgreSQL with an ORM) behind the same route handlers.
-- Sessions use the default in-memory store; with a database, a persistent session store (or JWT-only auth) would be used instead.
-- Rate limiting on `/customer/login` would be needed before real-world use.
+Utenti e recensioni sono in memoria e si azzerano quando il server riparte. Il passo successivo sarebbe un database, ad esempio PostgreSQL, dietro le stesse route. Prima di un uso reale servirebbe anche un limite ai tentativi di login.
 
-## Image credits
+## Crediti delle immagini
 
-Author portraits from [Wikimedia Commons](https://commons.wikimedia.org), cropped and converted to black and white:
+I ritratti degli autori vengono da [Wikimedia Commons](https://commons.wikimedia.org), ritagliati e convertiti in bianco e nero:
 
-| Author | Image by | Licence | Source |
+| Autore | Immagine di | Licenza | Fonte |
 | --- | --- | --- | --- |
 | Marco Aurelio | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Marcus_Aurelius_Louvre_MR561_n02.jpg) |
 | Seneca | Calidius | CC BY-SA 3.0 | [link](https://commons.wikimedia.org/wiki/File:Duble_herma_of_Socrates_and_Seneca_Antikensammlung_Berlin_07.jpg) |
-| Epitteto | Theodoor Galle | Public domain | [link](https://commons.wikimedia.org/wiki/File:Epictetus_from_L._Annaei_Senecae_philosophi_Opera,_1605,_title_page_detail.png) |
+| Epitteto | Theodoor Galle | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Epictetus_from_L._Annaei_Senecae_philosophi_Opera,_1605,_title_page_detail.png) |
 | Platone | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Plato_Silanion_Musei_Capitolini_MC1377.jpg) |
-| Epicuro | Marie-Lan Nguyen | Public domain | [link](https://commons.wikimedia.org/wiki/File:Epicurus_Massimo_Inv197306.jpg) |
-| Immanuel Kant | Johann Gottlieb Becker | Public domain | [link](https://commons.wikimedia.org/wiki/File:Immanuel_Kant_-_Gemaelde_2.jpg) |
-| Arthur Schopenhauer | Johann Schäfer | Public domain | [link](https://commons.wikimedia.org/wiki/File:Arthur_Schopenhauer_by_J_Schäfer,_1859b.jpg) |
-| Friedrich Nietzsche | Friedrich Hermann Hartmann | Public domain | [link](https://commons.wikimedia.org/wiki/File:Nietzsche187a.jpg) |
-| Søren Kierkegaard | Biblioteca Reale di Danimarca | Public domain | [link](https://commons.wikimedia.org/wiki/File:Søren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg) |
-| Albert Camus | United Press International | Public domain | [link](https://commons.wikimedia.org/wiki/File:Albert_Camus,_gagnant_de_prix_Nobel,_portrait_en_buste,_posé_au_bureau,_faisant_face_à_gauche,_cigarette_de_tabagisme.jpg) |
+| Epicuro | Marie-Lan Nguyen | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Epicurus_Massimo_Inv197306.jpg) |
+| Immanuel Kant | Johann Gottlieb Becker | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Immanuel_Kant_-_Gemaelde_2.jpg) |
+| Arthur Schopenhauer | Johann Schäfer | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Arthur_Schopenhauer_by_J_Schäfer,_1859b.jpg) |
+| Friedrich Nietzsche | Friedrich Hermann Hartmann | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Nietzsche187a.jpg) |
+| Søren Kierkegaard | Biblioteca Reale di Danimarca | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Søren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg) |
+| Albert Camus | United Press International | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Albert_Camus,_gagnant_de_prix_Nobel,_portrait_en_buste,_posé_au_bureau,_faisant_face_à_gauche,_cigarette_de_tabagisme.jpg) |
 | Viktor E. Frankl | Prof. Dr. Franz Vesely | CC BY-SA 3.0 DE | [link](https://commons.wikimedia.org/wiki/File:Viktor_Frankl2.jpg) |
 | Carl Gustav Jung | ETH-Bibliothek Zürich | Public Domain Mark | [link](https://commons.wikimedia.org/wiki/File:ETH-BIB-Jung,_Carl_Gustav_%281875-1961%29-Portrait-Portr_14163_%28cropped%29.tif) |
-| Sigmund Freud | Max Halberstadt | Public domain | [link](https://commons.wikimedia.org/wiki/File:Sigmund_Freud,_by_Max_Halberstadt_%28cropped%29.jpg) |
+| Sigmund Freud | Max Halberstadt | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Sigmund_Freud,_by_Max_Halberstadt_%28cropped%29.jpg) |
 | Daniel Kahneman | nrkbeta | CC BY-SA 2.0 | [link](https://commons.wikimedia.org/wiki/File:Daniel_Kahneman_%283283955327%29_%28cropped%29.jpg) |
 | Erich Fromm | Müller-May | CC BY-SA 3.0 DE | [link](https://commons.wikimedia.org/wiki/File:Erich_Fromm_1974_%28cropped%292.jpg) |
