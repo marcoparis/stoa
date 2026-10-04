@@ -45,7 +45,7 @@ const authenticate = (req, res, next) => {
         : req.session?.authorization?.accessToken;
 
     if (!token) {
-        return res.status(401).json({ message: "Accesso negato: effettua il login." });
+        return res.status(401).json({ message: "Access denied: please log in." });
     }
 
     try {
@@ -53,7 +53,7 @@ const authenticate = (req, res, next) => {
         req.user = { username: payload.username };
         return next();
     } catch {
-        return res.status(403).json({ message: "Token non valido o scaduto: effettua di nuovo il login." });
+        return res.status(403).json({ message: "Invalid or expired token: please log in again." });
     }
 };
 
@@ -61,22 +61,22 @@ regd_users.post("/login", async (req, res) => {
     const { username, password } = req.body ?? {};
 
     if (!username || !password) {
-        return res.status(400).json({ message: "Username e password sono obbligatori" });
+        return res.status(400).json({ message: "Username and password are required" });
     }
 
     if (!(await authenticatedUser(username, password))) {
-        return res.status(401).json({ message: "Username o password non corretti" });
+        return res.status(401).json({ message: "Incorrect username or password" });
     }
 
     const accessToken = jwt.sign({ username }, jwtSecret, { algorithm: 'HS256', expiresIn: jwtExpiresIn });
     req.session.authorization = { accessToken, username };
 
-    return res.status(200).json({ message: "Login effettuato con successo", token: accessToken });
+    return res.status(200).json({ message: "Logged in successfully", token: accessToken });
 });
 
 regd_users.post("/logout", (req, res) => {
     req.session.destroy(() => {
-        res.status(200).json({ message: "Logout effettuato" });
+        res.status(200).json({ message: "Logged out" });
     });
 });
 
@@ -85,20 +85,20 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     const review = (req.body?.review ?? req.query.review)?.toString().trim();
 
     if (!book) {
-        return res.status(404).json({ message: "Libro non trovato" });
+        return res.status(404).json({ message: "Book not found" });
     }
     if (!review) {
-        return res.status(400).json({ message: "Devi fornire una recensione (query ?review= oppure body JSON { review })" });
+        return res.status(400).json({ message: "You must provide a review (query ?review= or JSON body { review })" });
     }
     if (review.length > MAX_REVIEW_LENGTH) {
-        return res.status(400).json({ message: `La recensione non può superare ${MAX_REVIEW_LENGTH} caratteri` });
+        return res.status(400).json({ message: `The review cannot exceed ${MAX_REVIEW_LENGTH} characters` });
     }
 
     const isUpdate = Boolean(book.reviews[req.user.username]);
     book.reviews[req.user.username] = review;
 
     return res.status(isUpdate ? 200 : 201).json({
-        message: isUpdate ? "Recensione modificata con successo" : "Recensione aggiunta con successo",
+        message: isUpdate ? "Review updated successfully" : "Review added successfully",
         reviews: book.reviews,
     });
 });
@@ -107,15 +107,15 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     const book = books[req.params.isbn];
 
     if (!book) {
-        return res.status(404).json({ message: "Libro non trovato" });
+        return res.status(404).json({ message: "Book not found" });
     }
     if (!book.reviews[req.user.username]) {
-        return res.status(404).json({ message: "Non hai recensito questo libro" });
+        return res.status(404).json({ message: "You have not reviewed this book" });
     }
 
     delete book.reviews[req.user.username];
 
-    return res.status(200).json({ message: "Recensione cancellata con successo", reviews: book.reviews });
+    return res.status(200).json({ message: "Review deleted successfully", reviews: book.reviews });
 });
 
 module.exports.authenticated = regd_users;

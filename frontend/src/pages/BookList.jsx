@@ -40,24 +40,24 @@ export default function BookList() {
     <main className="page">
       {query ? (
         <div className="page-heading">
-          <h1>Risultati per “{query}”</h1>
+          <h1>Results for “{query}”</h1>
           <p className="muted">
-            Ricerca per {field === "author" ? "autore" : "titolo"} · <Link to="/">mostra tutti i libri</Link>
+            Search by {field === "author" ? "author" : "title"} · <Link to="/">show all books</Link>
           </p>
         </div>
       ) : (
         <div className="intro">
-          <h1>Libri che insegnano a vivere</h1>
+          <h1>Books that teach you how to live</h1>
           <p>
-            Stoici, classici, Kant, Nietzsche, esistenzialisti e grandi nomi della psicologia. Leggi le recensioni dei
-            lettori e aggiungi la tua.
+            Stoics, classics, Kant, Nietzsche, existentialists and great names in psychology. Read the readers'
+            reviews and add your own.
           </p>
         </div>
       )}
 
       {!loading && !result.error && categories.length > 1 && (
-        <div className="filters" role="group" aria-label="Filtra per corrente">
-          <button className={`chip ${!category ? "active" : ""}`} onClick={() => selectCategory("")}>Tutti</button>
+        <div className="filters" role="group" aria-label="Filter by school of thought">
+          <button className={`chip ${!category ? "active" : ""}`} onClick={() => selectCategory("")}>All</button>
           {categories.map((c) => (
             <button key={c} className={`chip ${category === c ? "active" : ""}`} onClick={() => selectCategory(c)}>
               {c}
@@ -66,10 +66,10 @@ export default function BookList() {
         </div>
       )}
 
-      {loading && <Loading label="Carico i libri..." />}
+      {loading && <Loading label="Loading books..." />}
       {!loading && result.error && <p className="alert alert-error">{result.error}</p>}
       {!loading && !result.error && books.length === 0 && (
-        <p className="empty">Nessun libro trovato. Prova con un altro termine.</p>
+        <p className="empty">No books found. Try another term.</p>
       )}
 
       {!loading && books.length > 0 && (
@@ -85,7 +85,7 @@ export default function BookList() {
                     <h2>{book.title}</h2>
                     <p className="muted">{book.author}</p>
                     <p className="review-count">
-                      <MessageSquare size={15} /> {reviewCount} {reviewCount === 1 ? "recensione" : "recensioni"}
+                      <MessageSquare size={15} /> {reviewCount} {reviewCount === 1 ? "review" : "reviews"}
                     </p>
                   </div>
                 </Link>

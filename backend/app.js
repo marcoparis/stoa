@@ -33,16 +33,16 @@ app.use("/customer", customer_routes);
 app.use("/", genl_routes);
 
 app.use((req, res) => {
-    res.status(404).json({ message: `Endpoint non trovato: ${req.method} ${req.originalUrl}` });
+    res.status(404).json({ message: `Endpoint not found: ${req.method} ${req.originalUrl}` });
 });
 
 // Express recognises error handlers by their 4-argument signature, so `next` must stay.
 app.use((err, req, res, next) => {
     if (err.type === 'entity.parse.failed') {
-        return res.status(400).json({ message: "JSON non valido nel body della richiesta" });
+        return res.status(400).json({ message: "Invalid JSON in the request body" });
     }
     console.error(err);
-    return res.status(500).json({ message: "Errore interno del server" });
+    return res.status(500).json({ message: "Internal server error" });
 });
 
 module.exports = app;

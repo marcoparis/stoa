@@ -24,18 +24,18 @@ export default function Header() {
       </Link>
 
       <form className="search" onSubmit={handleSearch} role="search">
-        <select value={field} onChange={(e) => setField(e.target.value)} aria-label="Cerca per">
-          <option value="title">Titolo</option>
-          <option value="author">Autore</option>
+        <select value={field} onChange={(e) => setField(e.target.value)} aria-label="Search by">
+          <option value="title">Title</option>
+          <option value="author">Author</option>
         </select>
         <input
           type="search"
-          placeholder={field === "title" ? "Cerca un titolo..." : "Cerca un autore..."}
+          placeholder={field === "title" ? "Search for a title..." : "Search for an author..."}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          aria-label="Testo da cercare"
+          aria-label="Search text"
         />
-        <button type="submit" aria-label="Cerca">
+        <button type="submit" aria-label="Search">
           <Search size={18} />
         </button>
       </form>
@@ -47,13 +47,13 @@ export default function Header() {
               <UserRound size={18} /> {user.username}
             </span>
             <button className="link-button" onClick={logout}>
-              <LogOut size={16} /> Esci
+              <LogOut size={16} /> Log out
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="link-button">Accedi</Link>
-            <Link to="/register" className="button-small">Registrati</Link>
+            <Link to="/login" className="link-button">Log in</Link>
+            <Link to="/register" className="button-small">Sign up</Link>
           </>
         )}
       </div>

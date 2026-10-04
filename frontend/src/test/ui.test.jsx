@@ -6,8 +6,8 @@ import App from "../App";
 import { AuthProvider } from "../auth/AuthProvider";
 
 const BOOKS = {
-  1: { author: "Marco Aurelio", title: "Meditazioni", category: "Stoicismo", reviews: { sofia: "Da comodino" } },
-  10: { author: "Friedrich Nietzsche", title: "Così parlò Zarathustra", category: "Filosofia moderna", reviews: {} },
+  1: { author: "Marcus Aurelius", title: "Meditations", category: "Stoicism", reviews: { sofia: "Bedside reading" } },
+  10: { author: "Friedrich Nietzsche", title: "Thus Spoke Zarathustra", category: "Modern philosophy", reviews: {} },
 };
 
 const respond = (status, body) =>
@@ -36,31 +36,31 @@ describe("catalog", () => {
     vi.stubGlobal("fetch", vi.fn(() => respond(200, BOOKS)));
     renderApp();
 
-    expect(await screen.findByRole("heading", { name: "Meditazioni" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: "Così parlò Zarathustra" })).toBeInTheDocument();
-    expect(screen.getByText("1 recensione")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Meditations" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Thus Spoke Zarathustra" })).toBeInTheDocument();
+    expect(screen.getByText("1 review")).toBeInTheDocument();
   });
 
   it("filters the catalog by category", async () => {
     vi.stubGlobal("fetch", vi.fn(() => respond(200, BOOKS)));
     renderApp();
 
-    await userEvent.click(await screen.findByRole("button", { name: "Stoicismo" }));
-    expect(screen.getByRole("heading", { name: "Meditazioni" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Così parlò Zarathustra" })).not.toBeInTheDocument();
+    await userEvent.click(await screen.findByRole("button", { name: "Stoicism" }));
+    expect(screen.getByRole("heading", { name: "Meditations" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Thus Spoke Zarathustra" })).not.toBeInTheDocument();
   });
 });
 
 describe("login", () => {
   it("shows the server error for wrong credentials", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => respond(401, { message: "Username o password non corretti" })));
+    vi.stubGlobal("fetch", vi.fn(() => respond(401, { message: "Incorrect username or password" })));
     renderApp("/login");
 
     await userEvent.type(screen.getByLabelText("Username"), "mario");
     await userEvent.type(screen.getByLabelText("Password"), "sbagliata");
-    await userEvent.click(screen.getByRole("button", { name: "Accedi" }));
+    await userEvent.click(screen.getByRole("button", { name: "Log in" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Username o password non corretti");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Incorrect username or password");
   });
 
   it("logs in and shows the username in the header", async () => {
@@ -75,9 +75,9 @@ describe("login", () => {
 
     await userEvent.type(screen.getByLabelText("Username"), "mario");
     await userEvent.type(screen.getByLabelText("Password"), "segreta1");
-    await userEvent.click(screen.getByRole("button", { name: "Accedi" }));
+    await userEvent.click(screen.getByRole("button", { name: "Log in" }));
 
     expect(await screen.findByText("mario")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Esci/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Log out/ })).toBeInTheDocument();
   });
 });

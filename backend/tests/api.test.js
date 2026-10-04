@@ -16,12 +16,12 @@ describe('public book endpoints', () => {
     test('GET / returns all books as JSON', async () => {
         const res = await request(app).get('/').expect('Content-Type', /json/).expect(200);
         expect(Object.keys(res.body)).toHaveLength(18);
-        expect(res.body['1']).toMatchObject({ author: 'Marco Aurelio', title: 'Meditazioni', category: 'Stoicismo' });
+        expect(res.body['1']).toMatchObject({ author: 'Marcus Aurelius', title: 'Meditations', category: 'Stoicism' });
     });
 
     test('GET /isbn/:isbn returns one book or 404', async () => {
         const res = await request(app).get('/isbn/10').expect(200);
-        expect(res.body).toMatchObject({ title: 'Così parlò Zarathustra', year: '1883–1885' });
+        expect(res.body).toMatchObject({ title: 'Thus Spoke Zarathustra', year: '1883–1885' });
         expect(res.body.description).toEqual(expect.any(String));
         await request(app).get('/isbn/999').expect(404);
     });
@@ -39,7 +39,7 @@ describe('public book endpoints', () => {
 
     test('unknown routes return a JSON 404', async () => {
         const res = await request(app).get('/does/not/exist').expect(404);
-        expect(res.body.message).toMatch(/non trovato/);
+        expect(res.body.message).toMatch(/not found/);
     });
 });
 
@@ -124,7 +124,7 @@ describe('reviews', () => {
 
         await agent.put('/customer/auth/review/4?review=Epico').expect(201);
         await agent.post('/customer/logout').expect(200);
-        await agent.put('/customer/auth/review/4?review=Ancora').expect(401);
+        await agent.put('/customer/auth/review/4?review=Again').expect(401);
     });
 
     test('users cannot delete reviews written by others', async () => {

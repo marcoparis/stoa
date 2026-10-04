@@ -1,90 +1,90 @@
 # Stoà
 
-Un sito di recensioni per libri di filosofia e psicologia: Marco Aurelio, Seneca e gli stoici, Platone ed Epicuro, Kant, Schopenhauer, Nietzsche, gli esistenzialisti e alcuni classici della psicologia come Frankl, Jung, Freud e Kahneman.
+A review site for philosophy and psychology books: Marcus Aurelius, Seneca and the Stoics, Plato and Epicurus, Kant, Schopenhauer, Nietzsche, the existentialists and some psychology classics such as Frankl, Jung, Freud and Kahneman.
 
-Chiunque può sfogliare il catalogo, filtrarlo per corrente e cercare per titolo o autore. Chi si registra può scrivere, modificare e cancellare le proprie recensioni.
+Anyone can browse the catalog, filter it by school of thought and search by title or author. Registered users can write, edit and delete their own reviews.
 
-- Sito: https://marcoparis.github.io/stoa/
-- API: https://expressbookreviews-xlyg.onrender.com (documentazione interattiva su `/api-docs`)
+- Site: https://marcoparis.github.io/stoa/
+- API: https://expressbookreviews-xlyg.onrender.com (interactive documentation at `/api-docs`)
 
-L'API sta sul piano gratuito di Render, che dopo un po' di inattività si spegne: la prima richiesta può impiegare fino a un minuto, e nel frattempo il sito mostra un avviso.
+The API runs on Render's free plan, which shuts down after a period of inactivity: the first request can take up to a minute, and in the meantime the site shows a notice.
 
-## Com'è fatto
+## How it is built
 
-Sono due progetti separati che parlano in JSON:
+Two separate projects that talk in JSON:
 
-- `frontend/`: app React pubblicata su GitHub Pages
-- `backend/`: API REST in Node.js ed Express, pubblicata su Render
+- `frontend/`: React app published on GitHub Pages
+- `backend/`: REST API in Node.js and Express, published on Render
 
-Al login l'API restituisce un JWT, che il sito salva e manda nell'header `Authorization` a ogni richiesta protetta. L'API accetta richieste dal browser solo dalle origini indicate in `CORS_ORIGINS`.
+On login the API returns a JWT, which the site stores and sends in the `Authorization` header with every protected request. The API only accepts browser requests from the origins listed in `CORS_ORIGINS`.
 
 ### Frontend
 
-React 19 con React Router. Uso `HashRouter` perché GitHub Pages serve solo file statici e non saprebbe gestire un indirizzo come `/books/3`. Lo stato di login sta in un Context React, con un hook `useAuth`. Il token resta in `localStorage` finché non scade; quando scade l'utente viene disconnesso con un messaggio. Ricerca e filtro per corrente finiscono nell'URL, così un risultato si può condividere.
+React 19 with React Router. I use `HashRouter` because GitHub Pages only serves static files and could not handle an address such as `/books/3`. Login state lives in a React Context, with a `useAuth` hook. The token stays in `localStorage` until it expires; when it expires the user is logged out with a message. Search and school-of-thought filter end up in the URL, so a result can be shared.
 
-Le copertine sono ritratti degli autori in bianco e nero, colorati in base alla corrente, con titolo e autore sopra. Non uso le copertine vere perché sono protette dal copyright degli editori.
+The covers are black-and-white author portraits, tinted by school of thought, with title and author on top. I do not use the real covers because they are protected by the publishers' copyright.
 
-Build con Vite, test con Vitest e React Testing Library, lint con oxlint.
+Build with Vite, tests with Vitest and React Testing Library, lint with oxlint.
 
 ### Backend
 
-Express 4. Le password sono salvate con bcrypt. Il JWT dura un'ora e viene accettato sia come header `Bearer` sia tramite cookie di sessione `httpOnly`. Ogni utente può modificare solo le proprie recensioni. Input e lunghezza dei testi vengono validati. Gli errori tornano sempre in JSON, con un gestore centrale e un 404 per gli indirizzi che non esistono.
+Express 4. Passwords are stored with bcrypt. The JWT lasts one hour and is accepted both as a `Bearer` header and through an `httpOnly` session cookie. Each user can only change their own reviews. Input and text length are validated. Errors always come back as JSON, with a central handler and a 404 for addresses that do not exist.
 
-La documentazione OpenAPI 3 è servita con Swagger UI su `/api-docs`, da cui si possono provare tutti gli endpoint. I test usano Jest e Supertest sull'app in memoria, senza aprire una porta: per questo `app.js` è separato da `index.js`.
+The OpenAPI 3 documentation is served with Swagger UI at `/api-docs`, where every endpoint can be tried out. The tests use Jest and Supertest on the in-memory app, without opening a port: this is why `app.js` is separate from `index.js`.
 
-| Metodo | Percorso | Login | Cosa fa |
+| Method | Path | Login | What it does |
 | --- | --- | --- | --- |
-| GET | `/` | | tutti i libri |
-| GET | `/isbn/:isbn` | | un libro |
-| GET | `/author/:author`, `/title/:title` | | ricerca, anche parziale e senza distinguere maiuscole |
-| GET | `/review/:isbn` | | recensioni di un libro |
-| POST | `/register` | | registrazione |
-| POST | `/customer/login`, `/customer/logout` | | accesso e uscita |
-| PUT | `/customer/auth/review/:isbn` | sì | scrive o modifica la propria recensione |
-| DELETE | `/customer/auth/review/:isbn` | sì | cancella la propria recensione |
+| GET | `/` | | all books |
+| GET | `/isbn/:isbn` | | one book |
+| GET | `/author/:author`, `/title/:title` | | search, partial and case-insensitive |
+| GET | `/review/:isbn` | | reviews of a book |
+| POST | `/register` | | sign up |
+| POST | `/customer/login`, `/customer/logout` | | log in and log out |
+| PUT | `/customer/auth/review/:isbn` | yes | write or edit your own review |
+| DELETE | `/customer/auth/review/:isbn` | yes | delete your own review |
 
-## Avvio in locale
+## Run locally
 
-Serve Node.js 22 o successivo. In due terminali:
+You need Node.js 22 or later. In two terminals:
 
 ```bash
 cd backend
 npm install
-npm run dev          # http://localhost:5000, documentazione su /api-docs
+npm run dev          # http://localhost:5000, documentation at /api-docs
 ```
 
 ```bash
 cd frontend
 npm install
-npm run dev          # http://localhost:5173, usa l'API locale
+npm run dev          # http://localhost:5173, uses the local API
 ```
 
-Test: `npm test` in ciascuna cartella. Per pubblicare il sito: `npm run deploy` in `frontend/`.
+Tests: `npm test` in each folder. To publish the site: `npm run deploy` in `frontend/`.
 
-Senza `JWT_SECRET` e `SESSION_SECRET` nel `.env` (vedi `backend/.env.example`) l'API ne genera di casuali all'avvio, quindi i token valgono fino al riavvio. Su Render le crea il blueprint `render.yaml`.
+Without `JWT_SECRET` and `SESSION_SECRET` in `.env` (see `backend/.env.example`) the API generates random ones at startup, so tokens are valid until the restart. On Render they are created by the `render.yaml` blueprint.
 
-## Limiti
+## Limitations
 
-Utenti e recensioni sono in memoria e si azzerano quando il server riparte. Il passo successivo sarebbe un database, ad esempio PostgreSQL, dietro le stesse route. Prima di un uso reale servirebbe anche un limite ai tentativi di login.
+Users and reviews are kept in memory and reset when the server restarts. The next step would be a database, such as PostgreSQL, behind the same routes. Before real use it would also need a limit on login attempts.
 
-## Crediti delle immagini
+## Image credits
 
-I ritratti degli autori vengono da [Wikimedia Commons](https://commons.wikimedia.org), ritagliati e convertiti in bianco e nero:
+The author portraits come from [Wikimedia Commons](https://commons.wikimedia.org), cropped and converted to black and white:
 
-| Autore | Immagine di | Licenza | Fonte |
+| Author | Image by | License | Source |
 | --- | --- | --- | --- |
-| Marco Aurelio | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Marcus_Aurelius_Louvre_MR561_n02.jpg) |
+| Marcus Aurelius | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Marcus_Aurelius_Louvre_MR561_n02.jpg) |
 | Seneca | Calidius | CC BY-SA 3.0 | [link](https://commons.wikimedia.org/wiki/File:Duble_herma_of_Socrates_and_Seneca_Antikensammlung_Berlin_07.jpg) |
-| Epitteto | Theodoor Galle | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Epictetus_from_L._Annaei_Senecae_philosophi_Opera,_1605,_title_page_detail.png) |
-| Platone | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Plato_Silanion_Musei_Capitolini_MC1377.jpg) |
-| Epicuro | Marie-Lan Nguyen | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Epicurus_Massimo_Inv197306.jpg) |
-| Immanuel Kant | Johann Gottlieb Becker | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Immanuel_Kant_-_Gemaelde_2.jpg) |
-| Arthur Schopenhauer | Johann Schäfer | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Arthur_Schopenhauer_by_J_Schäfer,_1859b.jpg) |
-| Friedrich Nietzsche | Friedrich Hermann Hartmann | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Nietzsche187a.jpg) |
-| Søren Kierkegaard | Biblioteca Reale di Danimarca | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Søren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg) |
-| Albert Camus | United Press International | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Albert_Camus,_gagnant_de_prix_Nobel,_portrait_en_buste,_posé_au_bureau,_faisant_face_à_gauche,_cigarette_de_tabagisme.jpg) |
+| Epictetus | Theodoor Galle | Public domain | [link](https://commons.wikimedia.org/wiki/File:Epictetus_from_L._Annaei_Senecae_philosophi_Opera,_1605,_title_page_detail.png) |
+| Plato | Marie-Lan Nguyen | CC BY 2.5 | [link](https://commons.wikimedia.org/wiki/File:Plato_Silanion_Musei_Capitolini_MC1377.jpg) |
+| Epicurus | Marie-Lan Nguyen | Public domain | [link](https://commons.wikimedia.org/wiki/File:Epicurus_Massimo_Inv197306.jpg) |
+| Immanuel Kant | Johann Gottlieb Becker | Public domain | [link](https://commons.wikimedia.org/wiki/File:Immanuel_Kant_-_Gemaelde_2.jpg) |
+| Arthur Schopenhauer | Johann Schäfer | Public domain | [link](https://commons.wikimedia.org/wiki/File:Arthur_Schopenhauer_by_J_Schäfer,_1859b.jpg) |
+| Friedrich Nietzsche | Friedrich Hermann Hartmann | Public domain | [link](https://commons.wikimedia.org/wiki/File:Nietzsche187a.jpg) |
+| Søren Kierkegaard | Royal Danish Library | Public domain | [link](https://commons.wikimedia.org/wiki/File:Søren_Kierkegaard_%281813-1855%29_-_%28cropped%29.jpg) |
+| Albert Camus | United Press International | Public domain | [link](https://commons.wikimedia.org/wiki/File:Albert_Camus,_gagnant_de_prix_Nobel,_portrait_en_buste,_posé_au_bureau,_faisant_face_à_gauche,_cigarette_de_tabagisme.jpg) |
 | Viktor E. Frankl | Prof. Dr. Franz Vesely | CC BY-SA 3.0 DE | [link](https://commons.wikimedia.org/wiki/File:Viktor_Frankl2.jpg) |
 | Carl Gustav Jung | ETH-Bibliothek Zürich | Public Domain Mark | [link](https://commons.wikimedia.org/wiki/File:ETH-BIB-Jung,_Carl_Gustav_%281875-1961%29-Portrait-Portr_14163_%28cropped%29.tif) |
-| Sigmund Freud | Max Halberstadt | Pubblico dominio | [link](https://commons.wikimedia.org/wiki/File:Sigmund_Freud,_by_Max_Halberstadt_%28cropped%29.jpg) |
+| Sigmund Freud | Max Halberstadt | Public domain | [link](https://commons.wikimedia.org/wiki/File:Sigmund_Freud,_by_Max_Halberstadt_%28cropped%29.jpg) |
 | Daniel Kahneman | nrkbeta | CC BY-SA 2.0 | [link](https://commons.wikimedia.org/wiki/File:Daniel_Kahneman_%283283955327%29_%28cropped%29.jpg) |
 | Erich Fromm | Müller-May | CC BY-SA 3.0 DE | [link](https://commons.wikimedia.org/wiki/File:Erich_Fromm_1974_%28cropped%292.jpg) |

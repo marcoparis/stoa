@@ -22,11 +22,11 @@ async function request(path, { method = "GET", body, token } = {}) {
       body: body === undefined ? undefined : JSON.stringify(body),
     });
   } catch {
-    throw new ApiError("Impossibile contattare il server. Riprova tra qualche istante.", 0);
+    throw new ApiError("Could not reach the server. Please try again in a moment.", 0);
   }
 
   const data = await res.json().catch(() => null);
-  if (!res.ok) throw new ApiError(data?.message || `Errore ${res.status}`, res.status);
+  if (!res.ok) throw new ApiError(data?.message || `Error ${res.status}`, res.status);
   return data;
 }
 

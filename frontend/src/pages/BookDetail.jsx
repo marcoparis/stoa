@@ -36,7 +36,7 @@ export default function BookDetail() {
     (err) => {
       if (err.status === 401 || err.status === 403) {
         logout();
-        setFeedback({ type: "error", text: "La sessione è scaduta: accedi di nuovo." });
+        setFeedback({ type: "error", text: "Your session has expired: please log in again." });
       } else {
         setFeedback({ type: "error", text: err.message });
       }
@@ -67,7 +67,7 @@ export default function BookDetail() {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Vuoi davvero cancellare la tua recensione?")) return;
+    if (!window.confirm("Do you really want to delete your review?")) return;
     setSaving(true);
     setFeedback(null);
     try {
@@ -85,7 +85,7 @@ export default function BookDetail() {
     return (
       <main className="page">
         <p className="alert alert-error">{loadError}</p>
-        <Link to="/" className="back-link"><ArrowLeft size={16} /> Torna al catalogo</Link>
+        <Link to="/" className="back-link"><ArrowLeft size={16} /> Back to the catalog</Link>
       </main>
     );
   }
@@ -93,7 +93,7 @@ export default function BookDetail() {
   if (!book) {
     return (
       <main className="page">
-        <Loading label="Carico il libro..." />
+        <Loading label="Loading the book..." />
       </main>
     );
   }
@@ -102,7 +102,7 @@ export default function BookDetail() {
 
   return (
     <main className="page">
-      <Link to="/" className="back-link"><ArrowLeft size={16} /> Torna al catalogo</Link>
+      <Link to="/" className="back-link"><ArrowLeft size={16} /> Back to the catalog</Link>
 
       <section className="book-detail">
         <BookCover title={book.title} author={book.author} category={book.category} size="lg" />
@@ -112,32 +112,32 @@ export default function BookDetail() {
           </p>
           <h1>{book.title}</h1>
           <p className="book-author">
-            di <Link to={`/?${new URLSearchParams({ q: book.author, by: "author" })}`}>{book.author}</Link>
+            by <Link to={`/?${new URLSearchParams({ q: book.author, by: "author" })}`}>{book.author}</Link>
           </p>
           {book.description && <p className="book-description">{book.description}</p>}
         </div>
       </section>
 
       <section className="reviews">
-        <h2>Recensioni ({reviews.length})</h2>
+        <h2>Reviews ({reviews.length})</h2>
 
         {feedback && <p className={`alert alert-${feedback.type}`} role="status">{feedback.text}</p>}
 
         {!user && (
           <p className="alert alert-info">
-            <Link to="/login" state={{ from: location.pathname }}>Accedi</Link> o{" "}
-            <Link to="/register" state={{ from: location.pathname }}>registrati</Link> per scrivere una recensione.
+            <Link to="/login" state={{ from: location.pathname }}>Log in</Link> or{" "}
+            <Link to="/register" state={{ from: location.pathname }}>sign up</Link> to write a review.
           </p>
         )}
 
         {user && !editing && (
           <div className="my-review-actions">
             <button className="button" onClick={startEditing} disabled={saving}>
-              <Pencil size={16} /> {myReview ? "Modifica la tua recensione" : "Scrivi una recensione"}
+              <Pencil size={16} /> {myReview ? "Edit your review" : "Write a review"}
             </button>
             {myReview && (
               <button className="button button-danger" onClick={handleDelete} disabled={saving}>
-                <Trash2 size={16} /> Cancella
+                <Trash2 size={16} /> Delete
               </button>
             )}
           </div>
@@ -145,7 +145,7 @@ export default function BookDetail() {
 
         {user && editing && (
           <form className="review-form" onSubmit={handleSave}>
-            <label htmlFor="review">La tua recensione</label>
+            <label htmlFor="review">Your review</label>
             <textarea
               id="review"
               value={draft}
@@ -159,10 +159,10 @@ export default function BookDetail() {
               <span className="muted small">{draft.length}/{MAX_REVIEW_LENGTH}</span>
               <div className="my-review-actions">
                 <button type="button" className="button button-secondary" onClick={() => setEditing(false)}>
-                  Annulla
+                  Cancel
                 </button>
                 <button type="submit" className="button" disabled={saving || !draft.trim()}>
-                  {saving ? "Salvataggio..." : "Pubblica"}
+                  {saving ? "Saving..." : "Publish"}
                 </button>
               </div>
             </div>
@@ -170,14 +170,14 @@ export default function BookDetail() {
         )}
 
         {reviews.length === 0 ? (
-          <p className="empty">Ancora nessuna recensione: scrivi la prima!</p>
+          <p className="empty">No reviews yet: write the first one!</p>
         ) : (
           <ul className="review-list">
             {reviews.map(([username, text]) => (
               <li key={username} className={`review ${username === user?.username ? "review-mine" : ""}`}>
                 <p className="review-author">
                   {username}
-                  {username === user?.username && <span className="badge">tu</span>}
+                  {username === user?.username && <span className="badge">you</span>}
                 </p>
                 <p className="review-text">{text}</p>
               </li>

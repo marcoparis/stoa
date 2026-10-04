@@ -15,7 +15,7 @@ describe("api client", () => {
   });
 
   it("treats a 404 search as no results", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => jsonResponse(404, { message: "Nessun libro" })));
+    vi.stubGlobal("fetch", vi.fn(() => jsonResponse(404, { message: "No books" })));
     await expect(searchBooks("author", "nobody")).resolves.toEqual([]);
   });
 
@@ -38,9 +38,9 @@ describe("api client", () => {
   });
 
   it("surfaces the server message and status on errors", async () => {
-    vi.stubGlobal("fetch", vi.fn(() => jsonResponse(401, { message: "Username o password non corretti" })));
+    vi.stubGlobal("fetch", vi.fn(() => jsonResponse(401, { message: "Incorrect username or password" })));
     await expect(saveReview("1", "x", "bad")).rejects.toMatchObject({
-      message: "Username o password non corretti",
+      message: "Incorrect username or password",
       status: 401,
     });
   });

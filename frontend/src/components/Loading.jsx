@@ -3,7 +3,7 @@ import { LoaderCircle } from "lucide-react";
 
 const SLOW_AFTER_MS = 4000;
 
-export default function Loading({ label = "Caricamento..." }) {
+export default function Loading({ label = "Loading..." }) {
   const [slow, setSlow] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function Loading({ label = "Caricamento..." }) {
       <p>{label}</p>
       {slow && (
         <p className="loading-hint">
-          Il server gratuito si sta risvegliando dopo un periodo di inattività: può servire fino a un minuto.
+          The free server is waking up after a period of inactivity: this can take up to a minute.
         </p>
       )}
     </div>

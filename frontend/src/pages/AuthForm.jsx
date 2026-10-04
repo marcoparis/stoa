@@ -4,19 +4,19 @@ import { useAuth } from "../auth/useAuth";
 
 const COPY = {
   login: {
-    title: "Accedi",
-    submit: "Accedi",
-    busy: "Accesso in corso...",
-    switchText: "Non hai un account?",
-    switchLink: "Registrati",
+    title: "Log in",
+    submit: "Log in",
+    busy: "Logging in...",
+    switchText: "Don't have an account?",
+    switchLink: "Sign up",
     switchTo: "/register",
   },
   register: {
-    title: "Crea un account",
-    submit: "Registrati",
-    busy: "Registrazione in corso...",
-    switchText: "Hai già un account?",
-    switchLink: "Accedi",
+    title: "Create an account",
+    submit: "Sign up",
+    busy: "Signing up...",
+    switchText: "Already have an account?",
+    switchLink: "Log in",
     switchTo: "/login",
   },
 };
@@ -64,7 +64,7 @@ export default function AuthForm({ mode }) {
           required
           {...(mode === "register" && { pattern: "[a-zA-Z0-9_.\\-]{3,30}", minLength: 3, maxLength: 30 })}
         />
-        {mode === "register" && <p className="hint">3-30 caratteri: lettere, numeri, punto, trattino o underscore.</p>}
+        {mode === "register" && <p className="hint">3-30 characters: letters, digits, dot, hyphen or underscore.</p>}
 
         <label htmlFor="password">Password</label>
         <input
@@ -76,7 +76,7 @@ export default function AuthForm({ mode }) {
           required
           {...(mode === "register" && { minLength: 6, maxLength: 72 })}
         />
-        {mode === "register" && <p className="hint">Almeno 6 caratteri.</p>}
+        {mode === "register" && <p className="hint">At least 6 characters.</p>}
 
         <button type="submit" className="button button-block" disabled={busy}>
           {busy ? copy.busy : copy.submit}

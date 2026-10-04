@@ -22,6 +22,6 @@ describe("author portraits", () => {
   });
 
   it("falls back to no portrait for unknown authors", () => {
-    expect(authorPortrait("Autore sconosciuto")).toBeNull();
+    expect(authorPortrait("Unknown author")).toBeNull();
   });
 });

@@ -32,10 +32,10 @@ module.exports = {
             Book: {
                 type: 'object',
                 properties: {
-                    author: { type: 'string', example: 'Marco Aurelio' },
-                    title: { type: 'string', example: 'Meditazioni' },
-                    category: { type: 'string', example: 'Stoicismo' },
-                    year: { type: 'string', example: '170–180 d.C.' },
+                    author: { type: 'string', example: 'Marcus Aurelius' },
+                    title: { type: 'string', example: 'Meditations' },
+                    category: { type: 'string', example: 'Stoicism' },
+                    year: { type: 'string', example: '170–180 AD' },
                     description: { type: 'string' },
                     reviews: ref('Reviews'),
                 },
@@ -47,7 +47,7 @@ module.exports = {
                 type: 'object',
                 description: 'Map of username → review text',
                 additionalProperties: { type: 'string' },
-                example: { sofia: 'Lo tengo sul comodino.' },
+                example: { sofia: 'I keep it on my nightstand.' },
             },
             Credentials: {
                 type: 'object',
@@ -156,7 +156,7 @@ module.exports = {
                         required: false,
                         description: 'Review text (alternatively send JSON body `{ "review": "..." }`)',
                         schema: { type: 'string', maxLength: 1000 },
-                        example: 'Un classico senza tempo.',
+                        example: 'A timeless classic.',
                     },
                 ],
                 responses: {

@@ -18,16 +18,16 @@ export default function App() {
         <Route path="/books/:isbn" element={<BookDetail />} />
         <Route path="/login" element={<AuthForm mode="login" />} />
         <Route path="/register" element={<AuthForm mode="register" />} />
-        <Route path="/crediti" element={<Credits />} />
-        <Route path="*" element={<main className="page"><p className="empty">Pagina non trovata.</p></main>} />
+        <Route path="/credits" element={<Credits />} />
+        <Route path="*" element={<main className="page"><p className="empty">Page not found.</p></main>} />
       </Routes>
       <footer className="footer">
-        Stoà · recensioni di filosofia e psicologia ·{" "}
+        Stoà · philosophy and psychology reviews ·{" "}
         <a href={`${API_URL}/api-docs`} target="_blank" rel="noreferrer">API</a>
         {" · "}
-        <a href="https://github.com/marcoparis/stoa" target="_blank" rel="noreferrer">Codice su GitHub</a>
+        <a href="https://github.com/marcoparis/stoa" target="_blank" rel="noreferrer">Code on GitHub</a>
         {" · "}
-        <Link to="/crediti">Crediti immagini</Link>
+        <Link to="/credits">Image credits</Link>
       </footer>
     </>
   );

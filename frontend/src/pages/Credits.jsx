@@ -5,16 +5,16 @@ import { AUTHORS } from "../data/authors";
 export default function Credits() {
   return (
     <main className="page">
-      <Link to="/" className="back-link"><ArrowLeft size={16} /> Torna al catalogo</Link>
-      <h1 className="credits-title">Crediti immagini</h1>
+      <Link to="/" className="back-link"><ArrowLeft size={16} /> Back to the catalog</Link>
+      <h1 className="credits-title">Image credits</h1>
       <p className="muted">
-        I ritratti degli autori provengono da Wikimedia Commons e sono usati secondo le rispettive licenze
-        (ritagliati e convertiti in bianco e nero).
+        The author portraits come from Wikimedia Commons and are used under their respective licenses
+        (cropped and converted to black and white).
       </p>
       <div className="credits-table-wrapper">
         <table className="credits-table">
           <thead>
-            <tr><th>Ritratto</th><th>Autore dell&apos;immagine</th><th>Licenza</th></tr>
+            <tr><th>Portrait</th><th>Image author</th><th>License</th></tr>
           </thead>
           <tbody>
             {Object.entries(AUTHORS).map(([name, { credit }]) => (
